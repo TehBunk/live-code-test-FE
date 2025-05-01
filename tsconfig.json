@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6", // or another version like "es5"
+    "lib": ["dom", "es6"], // Include "dom" here
+    "strict": true,
+    "module": "commonjs",
+    "jsx": "react", // or "react-jsx" for React 17+
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
