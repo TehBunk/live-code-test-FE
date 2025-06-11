@@ -1,52 +1,89 @@
 import React from "react";
 import ReallyLargeComponent from "./components/ReallyLargeComponent";
 
-/* LIVE CODING CHALLENGE INSTRUCTIONS
-   1. Implement lazy loading for ReallyLargeComponent 
-   2. Set up state for loading, error, and filtered countries
-   3. Fetch countries from https://restcountries.com/v2/all
-   4. Process the data:
-      - Add populationDensity = population/area (rounded to 2 decimals)
-      - Filter for countries with populationDensity > 100
-   5. Render the filtered countries list with all required fields
-   6. BONUS: 
-      - How would you implement search/filter functionality?
-      - How would you utilize state to handle pagination (assuming endpoint supports it)?
-      - How would you implement create/update features?
+/* LIVE CODING CHALLENGE 
+   
+   TASKS:
+   1. Fetch countries from the API endpoint below
+   2. Handle loading, error states 
+   3. Transform data: add populationDensity field (population/area, rounded to 2 decimals)
+   4. Create filtering function that accepts FilterCriteria and returns filtered countries
+   5. Map countries by continent, sort by density within each group (highest first)
+   6. Display mapped countries with lazy loading for ReallyLargeComponent
+   7. Add proper memoization (useMemo, useCallback)
+   
+   BONUS:
+   - How would you retry if the API is down?
+   - Implement search with debouncing (300ms)
+   - Create custom hook for data fetching
+   - Error boundaries
+   
+   DISCUSSION:
+   - How would you handle 10,000+ countries?
+   - When would you add global state management?
 */
 
-// Type used to model countries returned from the API
-export type Country = {
-  name: string;
+const API_ENDPOINT = "https://restcountries.com/v3.1/all?fields=name,population,area,capital,region,continents,flag,flags,independent,cca2";
+
+// API response type
+export type CountryApiResponse = {
+  name: {
+    common: string;
+    official: string;
+  };
   population: number;
   area: number;
-  capital: string;
+  capital?: string[];
   region: string;
+  continents: string[];
   flag: string;
-  // TODO: You will add a derived field: populationDensity
+  flags: {
+    png: string;
+    svg: string;
+  };
+  independent?: boolean;
+  cca2: string;
+};
+
+// Filter criteria
+export type FilterCriteria = {
+  searchTerm: string;
+  minPopulation: number;
+  selectedContinents: string[];
+  showOnlyIndependent: boolean;
 };
 
 export default function App() {
-  // TODO: Add state for isLoading, error, and countries
-
-  // TODO: Fetch countries from the API above
-  // Set loading and error state accordingly
-  // Store the raw data in `countries`
-  // Example API endpoint: https://restcountries.com/v2/all
-  // TODO: Add populationDensity = population / area (rounded to 2 decimals)
-  // TODO: Store filtered countries in a new state variable (e.g. denseCountries)
-  // Filter for countries where populationDensity > 100
+  // TODO: State for countries data, loading, error
+  // TODO: Fetch data from API_ENDPOINT with retry logic
+  // TODO: Transform data to add populationDensity
+  // TODO: Create filterCountries(countries, criteria) function
+  // TODO: Map by continent, sort by density
+  // Example map:
+  // {
+  //   "continent": {
+  //     "name": "Europe",
+  //     "countries": [
+  //       { "name": "Germany", "density": 234.56 },
+  //       { "name": "France", "density": 210.34 }
+  //     ]
+  //   }
+  // }
+  // TODO: Memoize expensive operations
 
   return (
     <div className="app-container">
-      <h1>Countries Population Density Explorer</h1>
+      <h1>Countries Population Density Dashboard</h1>
 
+      {/* TODO: Show loading/error states */}
+      
       <div className="heavy-component-container">
-        {/* TODO: Replace with Lazy loading and show a "Loading..." fallback */}
+        {/* TODO: Lazy load with Suspense */}
         <ReallyLargeComponent />
       </div>
 
-      {/* Table of countries */}
+      {/* TODO: Display grouped countries */}
+      {/* Each group: continent name, countries sorted by density */}
     </div>
   );
 }
