@@ -7,14 +7,13 @@ import ReallyLargeComponent from "./components/ReallyLargeComponent";
    1. Fetch countries from the API endpoint below
    2. Handle loading, error states 
    3. Transform data: add populationDensity field (population/area, rounded to 2 decimals)
-   4. Create filtering function that accepts FilterCriteria and returns filtered countries
+   4. Create filtering function that accepts countryData and returns filtered countries using the exampleFilterCriteria
    5. Map countries by continent, sort by density within each group (highest first)
    6. Display mapped countries with lazy loading for ReallyLargeComponent
    7. Add proper memoization (useMemo, useCallback)
    
    BONUS:
    - How would you retry if the API is down?
-   - Implement search with debouncing (300ms)
    - Create custom hook for data fetching
    - Error boundaries
    
@@ -53,37 +52,39 @@ export type FilterCriteria = {
   showOnlyIndependent: boolean;
 };
 
+const exampleFilterCriteria: FilterCriteria = {
+  searchTerm: "Lit",
+  minPopulation: 2794600,
+  selectedContinents: ["Europe"],
+  showOnlyIndependent: true,
+};
+
 export default function App() {
   // TODO: State for countries data, loading, error
   // TODO: Fetch data from API_ENDPOINT with retry logic
   // TODO: Transform data to add populationDensity
   // TODO: Create filterCountries(countries, criteria) function
-  // TODO: Map by continent, sort by density
+
+  // Bonus TODO: Map by continent, sort by density
   // Example map:
   // {
-  //   "continent": {
-  //     "name": "Europe",
-  //     "countries": [
-  //       { "name": "Germany", "density": 234.56 },
-  //       { "name": "France", "density": 210.34 }
-  //     ]
-  //   }
+  //   "Europe": [
+  //       { "name": "Lithuania", "density": 234.56 },
+  //       { "name": "Latvia", "density": 210.34 }
+  //   ]
   // }
-  // TODO: Memoize expensive operations
 
   return (
     <div className="app-container">
-      <h1>Countries Population Density Dashboard</h1>
+      <h1>Countries Population  Dashboard</h1>
 
       {/* TODO: Show loading/error states */}
       
       <div className="heavy-component-container">
-        {/* TODO: Lazy load with Suspense */}
+        {/* TODO: Prevent component from blocking page load */}
         <ReallyLargeComponent />
       </div>
 
-      {/* TODO: Display grouped countries */}
-      {/* Each group: continent name, countries sorted by density */}
     </div>
   );
 }
