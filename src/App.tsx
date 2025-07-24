@@ -2,6 +2,13 @@ import React, { useEffect, useState, Suspense } from "react";
 import ReallyLargeComponent from "./components/ReallyLargeComponent";
 
 /* LIVE CODING CHALLENGE 
+
+  Completed by: Zion Emond
+  07/24/2025
+  I decided to complete the coding challenge after the interview was over just for fun, and because I wanted to finish it.
+  I know there isn't really a way to verify I didn't use AI to complete it, so I guess you'll just have to take my word for it.
+  This was a fun exercise! I enjoy this kind of data manipulation.
+  Thanks again for your time in the interview.
    
    TASKS:
    1. Fetch countries from the API endpoint below
