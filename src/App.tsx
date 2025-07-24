@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import ReallyLargeComponent from "./components/ReallyLargeComponent";
 
 /* LIVE CODING CHALLENGE 
@@ -42,6 +42,14 @@ export type CountryApiResponse = {
   };
   independent?: boolean;
   cca2: string;
+}[];
+
+
+export type MappedCountryData = {
+  [key: string]: { // <-- had to look up how to do this kind of dynamic name. Had seen it before but hadn't actually implemented it. Learned something new today
+    name: string;
+    density: string;
+  }[]
 };
 
 // Filter criteria
@@ -65,7 +73,70 @@ export default function App() {
   // TODO: Transform data to add populationDensity
   // TODO: Create filterCountries(countries, criteria) function
 
-  // Bonus TODO: Map by continent, sort by density
+  const [countryData, setCountryData] = useState<CountryApiResponse>();
+  const [mappedData, setMappedData] = useState<MappedCountryData>();
+  const [filteredData, setFilteredData] = useState<CountryApiResponse>();
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(API_ENDPOINT)
+    .then(async (response) => {
+      const data = await response.json();
+      console.log('data: ', data);
+      setCountryData(data)
+      setMappedData(mapData(data));
+      setFilteredData(filterData(data, exampleFilterCriteria));
+    })
+    .catch(err => setError(`Error fetching from API: ${err}`))
+    .finally(() => setLoading(false));
+  }, []);
+
+  const mapData = (data?: CountryApiResponse): MappedCountryData | undefined => {
+
+    if (!data) return;
+    let mappedCountries: MappedCountryData = {};
+    for (const country of data) {
+      for (const continent of country.continents) {
+        const data = {
+          name: country.name.common,
+          density: (country.population / country.area).toFixed(2)
+        }
+        if (!mappedCountries[continent]) {
+          mappedCountries[continent] = [data];
+        } else {
+          mappedCountries[continent].push(data);
+        } 
+      }
+      
+    }
+
+
+    console.log('mappedData: ', mappedCountries);
+    return mappedCountries;
+  }
+
+  const filterData = (data: CountryApiResponse | undefined, filterCriteria: FilterCriteria): CountryApiResponse | undefined => {
+
+    if (!data) return;
+    const retVal = data.filter((country) => {
+      if (filterCriteria.showOnlyIndependent && !country.independent) return false;
+      if (country.name.common.includes(filterCriteria.searchTerm) &&
+      country.population >= filterCriteria.minPopulation) {
+        for (let i = 0; i < filterCriteria.selectedContinents.length; i++) {
+          if (!country.continents.includes(filterCriteria.selectedContinents[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    });
+    console.log('filteredData: ', retVal);
+    return retVal;
+  } 
+
+  // TODO: Map by continent, sort by density
   // Example map:
   // {
   //   "Europe": [
@@ -79,10 +150,29 @@ export default function App() {
       <h1>Countries Population  Dashboard</h1>
 
       {/* TODO: Show loading/error states */}
+      {
+        error ? (<span>ERROR!: {error}</span>) : (
+          <>
+          {
+            loading ? (<span>Loading...</span>) : (
+              <>
+                {/* could display these but it's ugly, so displaying in console instead 
+                <span>countryData: {JSON.stringify(countryData, null, 2)}</span>
+                <span>mappedData: {JSON.stringify(mappedData, null, 2)}</span>
+                <span>filteredData: {JSON.stringify(filteredData, null, 2)}</span> */}
+                <span>Data displayed in console!</span>
+              </>
+            )
+          }
+          </>
+        )
+      }
       
       <div className="heavy-component-container">
         {/* TODO: Prevent component from blocking page load */}
-        <ReallyLargeComponent />
+        <Suspense fallback={<span>ReallyLargeComponent loading...</span>}>
+          <ReallyLargeComponent />
+        </Suspense>
       </div>
 
     </div>
